@@ -1,12 +1,17 @@
 package com.example.mad_cw;
-
+import android.util.Log;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.io.Serializable;
@@ -34,8 +39,44 @@ public class UploadActivity extends AppCompatActivity {
 
         // Set up the click listener for the topics list
         setupTopicsList();
+
+        Button uploadFileButton = findViewById(R.id.upload_file_button);
+        uploadFileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performFileSearch();
+            }
+        });
     }
 
+    // ActivityResultLauncher to handle the result of file search
+    private final ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Log.d("UPLOAD_ACTIVITY", "in resultlauncher");
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Uri uri = data.getData();
+                        if (uri != null) {
+                            Log.d("UploadActivity", "File Uri: " + uri.toString());
+                            dbHelper.importQuestionsFromCSV(UploadActivity.this, uri);
+                        }
+                    }
+                }
+            });
+
+    // Method to launch the file search and allow user to select a CSV file
+    private void performFileSearch() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        String[] mimeTypes = {"text/csv", "text/plain", "text/comma-separated-values"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        resultLauncher.launch(intent);
+    }
+
+    // Inflate the options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -43,6 +84,7 @@ public class UploadActivity extends AppCompatActivity {
         return true;
     }
 
+    // Handle menu item clicks
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_home) {
@@ -74,7 +116,6 @@ public class UploadActivity extends AppCompatActivity {
     private List<Topic> getTopicsFromDatabase() {
         return dbHelper.getAllTopics();
     }
-
     // Method to set up the click listener for the topics ListView
     private void setupTopicsList() {
         // Find the ListView in the layout
@@ -98,11 +139,13 @@ public class UploadActivity extends AppCompatActivity {
         // Fetch the questions for the selected topic from the database
         List<Question> questions = dbHelper.getQuestionsForTopic(selectedTopic.getId());
 
+        // Create a new intent to start the MainActivity with the selected questions
         Intent intent = new Intent(UploadActivity.this, MainActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("questions", (Serializable) questions);
         intent.putExtras(bundle);
         startActivity(intent);
-
     }
+
+
 }
