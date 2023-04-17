@@ -8,13 +8,13 @@
         android:title="Home"
         android:icon="@drawable/ic_home"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_about"
-        android:title="About"
-        app:showAsAction="never" />
     <item
         android:id="@+id/action_upload"
         android:title="Upload CSV"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="About"
+        app:showAsAction="never" />
+
 </menu>
