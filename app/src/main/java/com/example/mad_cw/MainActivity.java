@@ -17,31 +17,50 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
+    private int currentQuestionIndex = 0;
     private List<Question> questions;
-    private int currentQuestionIndex;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        questions = getQuestionsFromIntent();
+        if (!questions.isEmpty()) {
+            displayQuestion(questions.get(currentQuestionIndex));
+            setupAnswerButtons();
+        } else {
+            // TODO: Display an empty state or an error message when there are no questions
+        }
+
         dbHelper = new DatabaseHelper(this);
         setupAnswerButtons();
-        loadTopicQuestions(1); // Replace '1' with the ID of the desired topic
-    }
-
-    private List<Question> getQuestionsForTopic(int topicId) {
-        return dbHelper.getQuestionsForTopic(topicId);
-    }
-
-    private void loadTopicQuestions(int topicId) {
-        questions = getQuestionsForTopic(topicId);
-        if (questions != null && !questions.isEmpty()) {
-            currentQuestionIndex = 0;
-            displayQuestion(questions.get(currentQuestionIndex));
+        int desiredTopicId = 1; // Replace '1' with the ID of the desired topic
+        Topic desiredTopic = dbHelper.getTopicById(desiredTopicId);
+        if (desiredTopic != null) {
+            loadTopicQuestions(desiredTopic);
         } else {
-            Toast.makeText(this, "No questions found for this topic!", Toast.LENGTH_SHORT).show();
+            // TODO: Display an error message if the topic is not found
         }
+    }
+
+    private List<Question> getQuestionsFromIntent() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            return (List<Question>) bundle.getSerializable("questions");
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private void loadTopicQuestions(Topic selectedTopic) {
+        List<Question> questions = getQuestionsFromIntent(); // Update this line to use the new method
+        Intent intent = new Intent(this, MainActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("questions", (Serializable) questions);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     // show the questions and answer options

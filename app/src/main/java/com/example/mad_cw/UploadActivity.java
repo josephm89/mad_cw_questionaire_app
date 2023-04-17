@@ -2,12 +2,14 @@ package com.example.mad_cw;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class UploadActivity extends AppCompatActivity {
@@ -71,6 +73,11 @@ public class UploadActivity extends AppCompatActivity {
         // Fetch the questions for the selected topic from the database
         List<Question> questions = dbHelper.getQuestionsForTopic(selectedTopic.getId());
 
-        // TODO: Do something with the loaded questions, e.g., pass them to the MainActivity
+        Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("questions", (Serializable) questions);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
     }
 }
