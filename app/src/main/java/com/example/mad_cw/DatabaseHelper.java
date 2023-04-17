@@ -1,34 +1,21 @@
 package com.example.mad_cw;
 import android.util.Log;
-import android.content.res.AssetManager;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
-
-import java.io.FileReader;
 import java.io.IOException;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.widget.Toast;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 public class DatabaseHelper extends SQLiteOpenHelper {
-    // Your DatabaseHelper implementation
     private static final String DATABASE_NAME = "question_database";
     private static final int DATABASE_VERSION = 1;
 
@@ -90,6 +77,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("difficulty", difficulty);
 
         long questionId = db.insert("questions", null, values);
+
+
         db.close();
         return questionId;
     }
@@ -135,7 +124,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return questions;
     }
-
     public Topic getTopicById(int topicId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM topics WHERE id = ?", new String[]{String.valueOf(topicId)});
@@ -154,32 +142,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return null;
     }
-//    public void importQuestionsFromCSV(AssetManager assetManager, String fileName) {
-//        try {
-//            InputStream inputStream = assetManager.open(fileName);
-//            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-//            CSVParser csvParser = CSVFormat.DEFAULT.withHeader().parse(inputStreamReader);
-//
-//            for (CSVRecord record : csvParser) {
-//                int topicId = Integer.parseInt(record.get("topic_id"));
-//                String questionText = record.get("question_text");
-//                String answerA = record.get("answer_a");
-//                String answerB = record.get("answer_b");
-//                String answerC = record.get("answer_c");
-//                String correctAnswer = record.get("correct_answer");
-//                int difficulty = Integer.parseInt(record.get("difficulty"));
-//
-//                insertQuestion(topicId, questionText, answerA, answerB, answerC, correctAnswer, difficulty);
-//            }
-//
-//            inputStreamReader.close();
-//            csvParser.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    public void importQuestionsFromCSV(Context context, Uri uri) {
+    public interface ImportCallback {
+        void onImportSuccess();
+    }
+    public void importQuestionsFromCSV(Context context, Uri uri, ImportCallback callback) {
         Log.d("UPLOAD_ACTIVITY", "importQuestionsFromCSV() method called");
         try {
             // Open an InputStream using the Uri
@@ -208,7 +174,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // Close the InputStreamReader and CSVParser
                 inputStreamReader.close();
                 csvParser.close();
-
+                if (callback != null) {
+                    callback.onImportSuccess();
+                }
                 Log.d("DatabaseHelper", "CSV import successful");
             } else {
                 Log.e("DatabaseHelper", "Failed to open InputStream");
@@ -216,61 +184,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("DatabaseHelper", "CSV import failed", e);
+            if (callback != null) {
+                Log.e("DatabaseHelper", "CSV import failed", e);
+            }
         }
     }
-
-
-      // without csv parser
-//    public void insertQuestionsFromCsv(InputStream inputStream) throws IOException {
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        String line;
-//        while ((line = reader.readLine()) != null) {
-//            String[] fields = line.split(",");
-//            if (fields.length == 7) {
-//                int topicId = Integer.parseInt(fields[0].trim());
-//                String questionText = fields[1].trim();
-//                String answerA = fields[2].trim();
-//                String answerB = fields[3].trim();
-//                String answerC = fields[4].trim();
-//                String correctAnswer = fields[5].trim();
-//                int difficulty = Integer.parseInt(fields[6].trim());
-//                insertQuestion(topicId, questionText, answerA, answerB, answerC, correctAnswer, difficulty);
-//            } else {
-//                throw new IOException("Invalid CSV format");
-//            }
-//        }
-//    }
-
-    // Parse questions from CSV file and insert them into the database
-//    private boolean parseQuestionsFromCSV(Topic topic) {
-//        InputStream inputStream = getResources().openRawResource(R.raw.questions);
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        String line;
-//        boolean success = false;
-//        try {
-//            while ((line = reader.readLine()) != null) {
-//                String[] tokens = line.split(",");
-//                if (tokens.length == 7) {
-//                    int topicId = topic.getId();
-//                    String questionText = tokens[0].replaceAll("\"", "");
-//                    String answerA = tokens[1].replaceAll("\"", "");
-//                    String answerB = tokens[2].replaceAll("\"", "");
-//                    String answerC = tokens[3].replaceAll("\"", "");
-//                    String correctAnswer = tokens[4].replaceAll("\"", "");
-//                    int difficulty = Integer.parseInt(tokens[5].replaceAll("\"", ""));
-//                    this.insertQuestion(topicId, questionText, answerA, answerB, answerC, correctAnswer, difficulty);
-//                    success = true;
-//                } else {
-//                    Toast.makeText(this, "Invalid CSV file format", Toast.LENGTH_SHORT).show();
-//                    success = false;
-//                    break;
-//                }
-//            }
-//            reader.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return success;
-//    }
 
 }

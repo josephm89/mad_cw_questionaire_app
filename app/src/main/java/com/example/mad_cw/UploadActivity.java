@@ -25,19 +25,30 @@ public class UploadActivity extends AppCompatActivity {
 
     // Declare a DatabaseHelper field to interact with the database
     private DatabaseHelper dbHelper;
+    private QuestionAdapter questionAdapter;
+    private ListView listView;
+    private int currentTopicId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        // Initialize the dbHelper field with a new instance of the DatabaseHelper class
         dbHelper = new DatabaseHelper(this);
 
-        // Load the topics and display them in the ListView
-        loadTopics();
 
-        // Set up the click listener for the topics list
+        List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
+        questionAdapter = new QuestionAdapter(this, questions);
+        listView = findViewById(R.id.topics_list);
+        listView.setAdapter(questionAdapter);
+
+
+        currentTopicId = 1; // hardcoded
+        refreshListView();
+
+
+
+        loadTopics();
         setupTopicsList();
 
         Button uploadFileButton = findViewById(R.id.upload_file_button);
@@ -48,7 +59,12 @@ public class UploadActivity extends AppCompatActivity {
             }
         });
     }
-
+    void refreshListView() {
+        List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
+        questionAdapter.clear();
+        questionAdapter.addAll(questions);
+        questionAdapter.notifyDataSetChanged();
+    }
     // ActivityResultLauncher to handle the result of file search
     private final ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -60,7 +76,12 @@ public class UploadActivity extends AppCompatActivity {
                         Uri uri = data.getData();
                         if (uri != null) {
                             Log.d("UploadActivity", "File Uri: " + uri.toString());
-                            dbHelper.importQuestionsFromCSV(UploadActivity.this, uri);
+                            dbHelper.importQuestionsFromCSV(UploadActivity.this, uri, new DatabaseHelper.ImportCallback() {
+                                @Override
+                                public void onImportSuccess() {
+                                    refreshListView();
+                                }
+                            });
                         }
                     }
                 }
@@ -103,7 +124,7 @@ public class UploadActivity extends AppCompatActivity {
     private void loadTopics() {
         // Call the getTopicsFromDatabase method to fetch the topics from the database
         List<Topic> topics = getTopicsFromDatabase();
-
+        Log.d("UploadActivity", "Topics count: " + topics.size());
         // Create an ArrayAdapter to display the topics in the ListView
         ArrayAdapter<Topic> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, topics);
 
