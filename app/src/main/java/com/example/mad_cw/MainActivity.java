@@ -15,6 +15,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
 public class MainActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private int currentQuestionIndex = 0;
@@ -43,6 +47,27 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // TODO: Display an error message if the topic is not found
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_upload) {
+            Intent intent = new Intent(MainActivity.this, UploadActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (item.getItemId() == R.id.action_about) {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private List<Question> getQuestionsFromIntent() {

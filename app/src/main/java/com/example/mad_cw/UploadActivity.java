@@ -12,6 +12,10 @@ import android.widget.ListView;
 import java.io.Serializable;
 import java.util.List;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
 public class UploadActivity extends AppCompatActivity {
 
     // Declare a DatabaseHelper field to interact with the database
@@ -30,6 +34,27 @@ public class UploadActivity extends AppCompatActivity {
 
         // Set up the click listener for the topics list
         setupTopicsList();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_home) {
+            Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (item.getItemId() == R.id.action_about) {
+            Intent intent = new Intent(UploadActivity.this, AboutActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Method to read the topics from the database and fill the ListView with them
