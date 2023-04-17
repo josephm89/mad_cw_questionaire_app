@@ -137,4 +137,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    public void insertQuestionsFromCsv(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] fields = line.split(",");
+            if (fields.length == 7) {
+                int topicId = Integer.parseInt(fields[0].trim());
+                String questionText = fields[1].trim();
+                String answerA = fields[2].trim();
+                String answerB = fields[3].trim();
+                String answerC = fields[4].trim();
+                String correctAnswer = fields[5].trim();
+                int difficulty = Integer.parseInt(fields[6].trim());
+                insertQuestion(topicId, questionText, answerA, answerB, answerC, correctAnswer, difficulty);
+            } else {
+                throw new IOException("Invalid CSV format");
+            }
+        }
+    }
+
 }

@@ -1,0 +1,4 @@
+topic_id,question_text,answer_a,answer_b,answer_c,correct_answer,difficulty
+1,"What is the capital of France?","Paris","London","Rome",A,1
+1,"Which planet is closest to the sun?","Mars","Earth","Mercury"",C,1
+1,"What is the sum of 12, 34, and 56?","102","108","98",A,1
