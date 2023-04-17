@@ -38,6 +38,7 @@ public class UploadActivity extends AppCompatActivity {
 
 
         List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
+        dbHelper.logAllTopics();
         questionAdapter = new QuestionAdapter(this, questions);
         listView = findViewById(R.id.topics_list);
         listView.setAdapter(questionAdapter);
@@ -61,6 +62,7 @@ public class UploadActivity extends AppCompatActivity {
     }
     void refreshListView() {
         List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
+        dbHelper.logAllTopics();
         questionAdapter.clear();
         questionAdapter.addAll(questions);
         questionAdapter.notifyDataSetChanged();

@@ -82,7 +82,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return questionId;
     }
-
     public List<Topic> getAllTopics() {
         List<Topic> topics = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -100,7 +99,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return topics;
     }
-
     public List<Question> getQuestionsForTopic(int topicId) {
         List<Question> questions = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -160,6 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // Iterate through each CSVRecord and insert questions into the database
                 for (CSVRecord record : csvParser) {
                     int topicId = Integer.parseInt(record.get("topic_id"));
+                    Log.d("DatabaseHelper", "Parsed topicId: " + topicId);
                     String questionText = record.get("question_text");
                     String answerA = record.get("answer_a");
                     String answerB = record.get("answer_b");
@@ -187,6 +186,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (callback != null) {
                 Log.e("DatabaseHelper", "CSV import failed", e);
             }
+        }
+    }
+    public void logAllTopics() { //for testing
+        List<Topic> topics = getAllTopics();
+        for (Topic topic : topics) {
+            Log.d("DatabaseHelper", "Topic id: " + topic.getId() + ", name: " + topic.getName());
         }
     }
 
