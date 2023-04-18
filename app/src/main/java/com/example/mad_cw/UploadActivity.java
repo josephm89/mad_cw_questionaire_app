@@ -48,6 +48,7 @@ public class UploadActivity extends AppCompatActivity {
             topicNames.add(topic.getName());
         }
 
+        // make the listview and adapter
         topicAdapter = new ArrayAdapter<>(UploadActivity.this, android.R.layout.simple_list_item_1, topicNames);
         topicsListView.setAdapter(topicAdapter);
 

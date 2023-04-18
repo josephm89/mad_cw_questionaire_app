@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         answerBButton.setOnClickListener(v -> checkAnswer("B"));
         answerCButton.setOnClickListener(v -> checkAnswer("C"));
     }
-
+    // lifecycle stuff because we are coming here from an intent with new data
     @Override
     protected void onResume() {
         super.onResume();

@@ -17,11 +17,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/new_topic_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/add_new_topic_button"
@@ -40,8 +37,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
-
     <ListView
         android:id="@+id/topics_list"
         android:layout_width="0dp"
@@ -49,7 +44,14 @@
         app:layout_constraintTop_toBottomOf="@+id/reset_data_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" >
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/new_topic_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ListView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

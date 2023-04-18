@@ -60,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
         db.close();
     }
+
     // populate the Topics table
     public long insertTopic(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -161,19 +162,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
-//    public Topic getTopicById(int topicId) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT * FROM topics WHERE id = ?", new String[]{String.valueOf(topicId)});
-//        if (cursor.moveToFirst()) {
-//            int id = cursor.getInt(cursor.getColumnIndex("id"));
-//            String name = cursor.getString(cursor.getColumnIndex("name"));
-//            cursor.close();
-//            db.close();
-//            return new Topic(id, name);
-//        }
-//        cursor.close();
-//        db.close();
-//        return null;
-//    }
 
 }
