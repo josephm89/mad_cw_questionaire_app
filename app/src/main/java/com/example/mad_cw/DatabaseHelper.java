@@ -30,7 +30,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT NOT NULL)";
         db.execSQL(CREATE_TOPICS_TABLE);
-
         // Create the questions table
         String CREATE_QUESTIONS_TABLE = "CREATE TABLE questions (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -50,7 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Drop existing tables if they exist
         db.execSQL("DROP TABLE IF EXISTS topics");
         db.execSQL("DROP TABLE IF EXISTS questions");
-
         // Recreate the tables with the updated schema
         onCreate(db);
     }
@@ -66,7 +64,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", name);
-
         long topicId = db.insert("topics", null, values);
         db.close();
         return topicId;
@@ -82,10 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("answer_c", answerC);
         values.put("correct_answer", correctAnswer);
         values.put("difficulty", difficulty);
-
         long questionId = db.insert("questions", null, values);
-
-
         db.close();
         return questionId;
     }
@@ -93,7 +87,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Topic> topics = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM topics", null);
-
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -101,7 +94,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 topics.add(new Topic(id, name));
             } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
         return topics;
@@ -111,7 +103,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Question> questions = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM questions WHERE topic_id = ?", new String[]{String.valueOf(topicId)});
-
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -125,7 +116,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 questions.add(new Question(id, questionText, answerA, answerB, answerC, correctAnswer, difficulty));
             } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
         return questions;
@@ -133,17 +123,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Topic getTopicById(int topicId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM topics WHERE id = ?", new String[]{String.valueOf(topicId)});
-
         if (cursor.moveToFirst()) {
             int id = cursor.getInt(cursor.getColumnIndex("id"));
             String name = cursor.getString(cursor.getColumnIndex("name"));
-
             cursor.close();
             db.close();
-
             return new Topic(id, name);
         }
-
         cursor.close();
         db.close();
         return null;
@@ -152,17 +138,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         void onImportSuccess();
     }
     public void importQuestionsFromCSV(Context context, long topicId, Uri uri, ImportCallback callback) {
-        Log.d("UPLOAD_ACTIVITY", "importQuestionsFromCSV() method called");
         try {
             // Open an InputStream using the Uri
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
             if (inputStream != null) {
                 // Create an InputStreamReader to read the InputStream
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-
                 // Create a CSVParser to parse the contents of the InputStream
                 CSVParser csvParser = CSVFormat.DEFAULT.withHeader().withQuoteMode(QuoteMode.ALL).parse(inputStreamReader);
-
                 // Iterate through each CSVRecord and insert questions into the database
                 for (CSVRecord record : csvParser) {
 
@@ -174,9 +157,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     int difficulty = Integer.parseInt(record.get("difficulty"));
 
                     insertQuestion(topicId, questionText, answerA, answerB, answerC, correctAnswer, difficulty);
-                    Log.d("DatabaseHelper", "Inserted question: " + questionText);
-                }
 
+                }
                 // Close the InputStreamReader and CSVParser
                 inputStreamReader.close();
                 csvParser.close();
@@ -184,29 +166,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     callback.onImportSuccess();
                 }
                 Log.d("DatabaseHelper", "CSV import successful");
-
-                // Add these lines to log the number of topics and questions
-                List<Topic> topicsAfterImport = getAllTopics();
-                Log.d("DatabaseHelper", "Number of topics after import: " + topicsAfterImport.size());
-                for (Topic topic : topicsAfterImport) {
-                    List<Question> questionsForTopic = getQuestionsForTopic(topic.getId());
-                    Log.d("DatabaseHelper", "Number of questions for topic " + topic.getName() + ": " + questionsForTopic.size());
-                }
-            } else {
-                Log.e("DatabaseHelper", "Failed to open InputStream");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("DatabaseHelper", "CSV import failed", e);
-            if (callback != null) {
-                Log.e("DatabaseHelper", "CSV import failed", e);
-            }
-        }
-    }
-    public void logAllTopics() { //for testing
-        List<Topic> topics = getAllTopics();
-        for (Topic topic : topics) {
-            Log.d("DatabaseHelper", "Topic id: " + topic.getId() + ", name: " + topic.getName());
         }
     }
 

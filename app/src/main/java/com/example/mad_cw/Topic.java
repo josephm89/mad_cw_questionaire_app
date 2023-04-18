@@ -2,10 +2,10 @@ package com.example.mad_cw;
 
 public class Topic {
 
-    private Integer id;
+    private long id;
     private String name;
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
