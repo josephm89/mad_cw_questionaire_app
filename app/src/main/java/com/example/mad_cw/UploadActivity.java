@@ -32,7 +32,7 @@ public class UploadActivity extends AppCompatActivity {
     private EditText newTopicNameEditText;
     private Button addNewTopicButton;
 
-    private int currentTopicId;
+    private long newTopicId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,7 @@ public class UploadActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String topicName = newTopicNameEditText.getText().toString();
                 if (!topicName.isEmpty()) {
-                    dbHelper.insertTopic(topicName);
+                    newTopicId = dbHelper.insertTopic(topicName);
                     Toast.makeText(UploadActivity.this, "New topic added: " + topicName, Toast.LENGTH_SHORT).show();
                     newTopicNameEditText.setText("");// Clear the EditText
 
@@ -118,7 +118,7 @@ public class UploadActivity extends AppCompatActivity {
                     if (data != null) {
                         Uri uri = data.getData();
                         if (uri != null) {      //get csv, send the specified topic id from button, refresh callback
-                            dbHelper.importQuestionsFromCSV(UploadActivity.this, this.currentTopicId , uri, () -> refreshListView());
+                            dbHelper.importQuestionsFromCSV(UploadActivity.this, this.newTopicId , uri, () -> refreshListView());
                         }
                     }
                 }
@@ -144,7 +144,7 @@ public class UploadActivity extends AppCompatActivity {
         topicAdapter.clear();
         topicAdapter.addAll(topicNames);
         topicAdapter.notifyDataSetChanged();
-        Log.d("UploadActivity", "Total Topics: " + topics.size() + ", Topic Names: " + topicNames);
+        Log.d("UploadActivity", " refresh list called Total Topics: " + topics.size() + ", Topic Names: " + topicNames);
 
     }
 

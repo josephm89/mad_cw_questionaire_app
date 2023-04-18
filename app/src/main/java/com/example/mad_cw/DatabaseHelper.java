@@ -72,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return topicId;
     }
 
-    public long insertQuestion(int topicId, String questionText, String answerA, String answerB, String answerC, String correctAnswer, int difficulty) {
+    public long insertQuestion(long topicId, String questionText, String answerA, String answerB, String answerC, String correctAnswer, int difficulty) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("topic_id", topicId);
@@ -107,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return topics;
     }
 
-    public List<Question> getQuestionsForTopic(int topicId) {
+    public List<Question> getQuestionsForTopic(long topicId) {
         List<Question> questions = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM questions WHERE topic_id = ?", new String[]{String.valueOf(topicId)});
@@ -151,7 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public interface ImportCallback {
         void onImportSuccess();
     }
-    public void importQuestionsFromCSV(Context context, int topicId, Uri uri, ImportCallback callback) {
+    public void importQuestionsFromCSV(Context context, long topicId, Uri uri, ImportCallback callback) {
         Log.d("UPLOAD_ACTIVITY", "importQuestionsFromCSV() method called");
         try {
             // Open an InputStream using the Uri
@@ -165,8 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 // Iterate through each CSVRecord and insert questions into the database
                 for (CSVRecord record : csvParser) {
-                    //int topicId = Integer.parseInt(record.get("topic_id"));
-                    Log.d("DatabaseHelper", "Parsed topicId: " + topicId);
+
                     String questionText = record.get("question_text");
                     String answerA = record.get("answer_a");
                     String answerB = record.get("answer_b");
