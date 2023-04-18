@@ -3,7 +3,6 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,40 +11,50 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
 
 public class UploadActivity extends AppCompatActivity {
 
-    // Declare a DatabaseHelper field to interact with the database
     private DatabaseHelper dbHelper;
-    private QuestionAdapter questionAdapter;
-    private ListView listView;
+    private List<Topic> topics;
+    private ListView topicsListView;
+    private ArrayAdapter<String> topicAdapter;
+    private EditText newTopicNameEditText;
+    private Button addNewTopicButton;
+
     private int currentTopicId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
         dbHelper = new DatabaseHelper(this);
 
+        //currentTopicId = 1; // hardcoded
 
-        List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
-        dbHelper.logAllTopics();
-        questionAdapter = new QuestionAdapter(this, questions);
-        listView = findViewById(R.id.topics_list);
-        listView.setAdapter(questionAdapter);
+        topicsListView = findViewById(R.id.topics_list);
 
+        topics = dbHelper.getAllTopics();
 
-        currentTopicId = 1; // hardcoded
-        refreshListView();
+        List<String> topicNames = new ArrayList<>();
+        for (Topic topic : topics) {
+            topicNames.add(topic.getName());
+        }
+
+        topicAdapter = new ArrayAdapter<>(UploadActivity.this, android.R.layout.simple_list_item_1, topicNames);
+        topicsListView.setAdapter(topicAdapter);
 
 
 
@@ -59,37 +68,82 @@ public class UploadActivity extends AppCompatActivity {
                 performFileSearch();
             }
         });
+
+        //resetbutton
+        Button resetDataButton = findViewById(R.id.reset_data_button);
+        // Set the OnClickListener for the reset data button
+        resetDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseHelper databaseHelper = new DatabaseHelper(UploadActivity.this);
+                databaseHelper.dropAllTables();
+                Toast.makeText(UploadActivity.this, "Data reset successfully!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+        newTopicNameEditText = findViewById(R.id.new_topic_name);
+        addNewTopicButton = findViewById(R.id.add_new_topic_button);
+
+        addNewTopicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String topicName = newTopicNameEditText.getText().toString();
+                if (!topicName.isEmpty()) {
+                    dbHelper.insertTopic(topicName);
+                    Toast.makeText(UploadActivity.this, "New topic added: " + topicName, Toast.LENGTH_SHORT).show();
+                    newTopicNameEditText.setText(""); // Clear the EditText
+                } else {
+                    Toast.makeText(UploadActivity.this, "Please enter a topic name", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        ////no need?
+//        //List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
+//        dbHelper.logAllTopics();
+//        //questionAdapter = new QuestionAdapter(this, questions);
+//        listView = findViewById(R.id.topics_list);
+//        listView.setAdapter(questionAdapter);
+//        refreshListView();
+
+
+
+
+
+
+
+
+
     }
     void refreshListView() {
-        List<Question> questions = dbHelper.getQuestionsForTopic(currentTopicId);
-        dbHelper.logAllTopics();
-        questionAdapter.clear();
-        questionAdapter.addAll(questions);
-        questionAdapter.notifyDataSetChanged();
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        topics = databaseHelper.getAllTopics();
+
+        // Extract topic names from the list of Topic objects
+        List<String> topicNames = new ArrayList<>();
+        for (Topic topic : topics) {
+            topicNames.add(topic.getName());
+        }
+
+        topicAdapter.clear();
+        topicAdapter.addAll(topicNames);
+        topicAdapter.notifyDataSetChanged();
     }
-    // ActivityResultLauncher to handle the result of file search
     private final ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                Log.d("UPLOAD_ACTIVITY", "in resultlauncher");
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null) {
                         Uri uri = data.getData();
                         if (uri != null) {
-                            Log.d("UploadActivity", "File Uri: " + uri.toString());
-                            dbHelper.importQuestionsFromCSV(UploadActivity.this, uri, new DatabaseHelper.ImportCallback() {
-                                @Override
-                                public void onImportSuccess() {
-                                    refreshListView();
-                                }
-                            });
+                            dbHelper.importQuestionsFromCSV(UploadActivity.this, this.currentTopicId , uri, () -> refreshListView());
                         }
                     }
                 }
             });
 
-    // Method to launch the file search and allow user to select a CSV file
     private void performFileSearch() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -99,7 +153,6 @@ public class UploadActivity extends AppCompatActivity {
         resultLauncher.launch(intent);
     }
 
-    // Inflate the options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -107,7 +160,6 @@ public class UploadActivity extends AppCompatActivity {
         return true;
     }
 
-    // Handle menu item clicks
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_home) {
@@ -122,7 +174,6 @@ public class UploadActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Method to read the topics from the database and fill the ListView with them
     private void loadTopics() {
         // Call the getTopicsFromDatabase method to fetch the topics from the database
         List<Topic> topics = getTopicsFromDatabase();
@@ -135,11 +186,11 @@ public class UploadActivity extends AppCompatActivity {
         topicsList.setAdapter(adapter);
     }
 
-    // Method to fetch topics from the SQLite database using the dbHelper instance
+
     private List<Topic> getTopicsFromDatabase() {
         return dbHelper.getAllTopics();
     }
-    // Method to set up the click listener for the topics ListView
+
     private void setupTopicsList() {
         // Find the ListView in the layout
         ListView topicsList = findViewById(R.id.topics_list);

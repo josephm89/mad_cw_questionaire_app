@@ -40,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
         setupAnswerButtons();
-        int desiredTopicId = 1; // Replace '1' with the ID of the desired topic
-        Topic desiredTopic = dbHelper.getTopicById(desiredTopicId);
-        if (desiredTopic != null) {
-            loadTopicQuestions(desiredTopic);
-        } else {
-            // TODO: Display an error message if the topic is not found
-        }
+       // int desiredTopicId = 1; // Replace '1' with the ID of the desired topic
+       // Topic desiredTopic = dbHelper.getTopicById(desiredTopicId);
+       // if (desiredTopic != null) {
+       //     loadTopicQuestions(desiredTopic);
+       // } else {
+       //     // TODO: Display an error message if the topic is not found
+       // }
     }
 
     @Override

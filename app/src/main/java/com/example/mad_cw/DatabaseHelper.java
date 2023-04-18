@@ -54,6 +54,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Recreate the tables with the updated schema
         onCreate(db);
     }
+    public void dropAllTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS topics");
+        db.execSQL("DROP TABLE IF EXISTS questions");
+        onCreate(db);
+        db.close();
+    }
 
     public long insertTopic(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -143,7 +150,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public interface ImportCallback {
         void onImportSuccess();
     }
-    public void importQuestionsFromCSV(Context context, Uri uri, ImportCallback callback) {
+    public void importQuestionsFromCSV(Context context, int topicId, Uri uri, ImportCallback callback) {
         Log.d("UPLOAD_ACTIVITY", "importQuestionsFromCSV() method called");
         try {
             // Open an InputStream using the Uri
@@ -157,7 +164,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 // Iterate through each CSVRecord and insert questions into the database
                 for (CSVRecord record : csvParser) {
-                    int topicId = Integer.parseInt(record.get("topic_id"));
+                    //int topicId = Integer.parseInt(record.get("topic_id"));
                     Log.d("DatabaseHelper", "Parsed topicId: " + topicId);
                     String questionText = record.get("question_text");
                     String answerA = record.get("answer_a");
@@ -177,6 +184,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     callback.onImportSuccess();
                 }
                 Log.d("DatabaseHelper", "CSV import successful");
+
+                // Add these lines to log the number of topics and questions
+                List<Topic> topicsAfterImport = getAllTopics();
+                Log.d("DatabaseHelper", "Number of topics after import: " + topicsAfterImport.size());
+                for (Topic topic : topicsAfterImport) {
+                    List<Question> questionsForTopic = getQuestionsForTopic(topic.getId());
+                    Log.d("DatabaseHelper", "Number of questions for topic " + topic.getName() + ": " + questionsForTopic.size());
+                }
             } else {
                 Log.e("DatabaseHelper", "Failed to open InputStream");
             }
