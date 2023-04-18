@@ -10,7 +10,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_upload"
-        android:title="Upload CSV"
+        android:title="Change Topic"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_about"
