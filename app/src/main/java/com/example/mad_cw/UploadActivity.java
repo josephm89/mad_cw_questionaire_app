@@ -39,16 +39,9 @@ public class UploadActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
-
         dbHelper = new DatabaseHelper(this);
-
         topics = dbHelper.getAllTopics();
-
-        //currentTopicId = 1; // hardcoded
-
         topicsListView = findViewById(R.id.topics_list);
-
-
 
         List<String> topicNames = new ArrayList<>();
         for (Topic topic : topics) {
@@ -69,21 +62,18 @@ public class UploadActivity extends AppCompatActivity {
             }
         });
 
-        //resetbutton
+        //reset button
         Button resetDataButton = findViewById(R.id.reset_data_button);
-        // Set the OnClickListener for the reset data button
         resetDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // DatabaseHelper databaseHelper = new DatabaseHelper(UploadActivity.this);
                 dbHelper.dropAllTables();
                 refreshListView();
                 Toast.makeText(UploadActivity.this, "Data reset successfully!", Toast.LENGTH_SHORT).show();
             }
         });
 
-
-
+        // add new topic button
         newTopicNameEditText = findViewById(R.id.new_topic_name);
         addNewTopicButton = findViewById(R.id.add_new_topic_button);
 
@@ -107,9 +97,9 @@ public class UploadActivity extends AppCompatActivity {
 
         refreshListView();
     }
-    ////////////////////////////ON CREATE END//////////////////////////////////////////////////////
+    ////////////////////////////On Create Ends//////////////////////////////////////////////////////
 
-    // file search
+    ////////////////////////////// File Search /////////////////////////////////////////////////////
     private final ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -132,8 +122,7 @@ public class UploadActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         resultLauncher.launch(intent);
     }
-    // file search ends
-
+    /////////////////////////// File Search Ends  //////////////////////////////////////////////////
 
     void refreshListView() {
         topics = dbHelper.getAllTopics();
@@ -148,10 +137,7 @@ public class UploadActivity extends AppCompatActivity {
 
     }
 
-
-
-
-    /////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////// Menu /////////////////////////////////////////////////
     // menu setup
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

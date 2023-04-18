@@ -52,14 +52,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Recreate the tables with the updated schema
         onCreate(db);
     }
-    public void dropAllTables() {
+    // reset database for testing purposes
+    public void dropAllTables() { // for testing purposes
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS topics");
         db.execSQL("DROP TABLE IF EXISTS questions");
         onCreate(db);
         db.close();
     }
-
+    // populate the Topics table
     public long insertTopic(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -68,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return topicId;
     }
-
+    // populate the questions table
     public long insertQuestion(long topicId, String questionText, String answerA, String answerB, String answerC, String correctAnswer, int difficulty) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -83,6 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return questionId;
     }
+    // for the upload screen's listview
     public List<Topic> getAllTopics() {
         List<Topic> topics = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -98,7 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return topics;
     }
-
+    // after the selected topic is sent to the mainactivity, gets the questions from it
     public List<Question> getQuestionsForTopic(long topicId) {
         List<Question> questions = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -120,23 +122,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return questions;
     }
-    public Topic getTopicById(int topicId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM topics WHERE id = ?", new String[]{String.valueOf(topicId)});
-        if (cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndex("id"));
-            String name = cursor.getString(cursor.getColumnIndex("name"));
-            cursor.close();
-            db.close();
-            return new Topic(id, name);
-        }
-        cursor.close();
-        db.close();
-        return null;
-    }
+    // to handle the asyncness of the csv parser from the other activity
     public interface ImportCallback {
         void onImportSuccess();
     }
+    // is called from main after the file is selected, get a callback so it's run after csv parse is done
     public void importQuestionsFromCSV(Context context, long topicId, Uri uri, ImportCallback callback) {
         try {
             // Open an InputStream using the Uri
@@ -171,5 +161,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
+//    public Topic getTopicById(int topicId) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT * FROM topics WHERE id = ?", new String[]{String.valueOf(topicId)});
+//        if (cursor.moveToFirst()) {
+//            int id = cursor.getInt(cursor.getColumnIndex("id"));
+//            String name = cursor.getString(cursor.getColumnIndex("name"));
+//            cursor.close();
+//            db.close();
+//            return new Topic(id, name);
+//        }
+//        cursor.close();
+//        db.close();
+//        return null;
+//    }
 
 }

@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
         answerBButton = findViewById(R.id.answer_button_b);
         answerCButton = findViewById(R.id.answer_button_c);
 
-//        answerAButton.setOnClickListener(v -> checkAnswerAndSetNewQuestion(currentQuestion.getAnswerA()));
-//        answerBButton.setOnClickListener(v -> checkAnswerAndSetNewQuestion(currentQuestion.getAnswerB()));
-//        answerCButton.setOnClickListener(v -> checkAnswerAndSetNewQuestion(currentQuestion.getAnswerC()));
         answerAButton.setOnClickListener(v -> checkAnswer("A"));
         answerBButton.setOnClickListener(v -> checkAnswer("B"));
         answerCButton.setOnClickListener(v -> checkAnswer("C"));
@@ -71,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
             updateQuestions(selectedTopicId);
         }
     }
-
-
+    // when we get to the main from the list click we need to update the data
     private void updateQuestions(long selectedTopicId) {
         if (selectedTopicId != -1) {
             questions = dbHelper.getQuestionsForTopic(selectedTopicId);
@@ -81,7 +77,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+    // hacky way to compare the A/B/C to the right answer
+    private void checkAnswer(String selectedAnswer) {
+        if (selectedAnswer.equals(correctAnswer)) {
+            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+            setRandomQuestion();
+        } else {
+            Toast.makeText(this, "Wrong!", Toast.LENGTH_SHORT).show();
+        }
+    }
+    // after selecting an answer we get a new one unless it's wrong
     private void setRandomQuestion() {
         Random random = new Random();
         int randomIndex = random.nextInt(questions.size());
@@ -93,58 +98,16 @@ public class MainActivity extends AppCompatActivity {
         answerBButton.setText(currentQuestion.getAnswerB());
         answerCButton.setText(currentQuestion.getAnswerC());
 
-
     }
-
-//    private void setRandomQuestion() {
-//        Random random = new Random();
-//        int randomIndex = random.nextInt(questions.size());
-//        Question question = questions.get(randomIndex);
-//
-//        questionTextView.setText(question.getQuestionText());
-//        answerAButton.setText(question.getAnswerA());
-//        answerBButton.setText(question.getAnswerB());
-//        answerCButton.setText(question.getAnswerC());
-//    }
-
-
-//    private void checkAnswerAndSetNewQuestion(String selectedAnswer) {
-//        if (currentQuestion.getCorrectAnswer().equals(selectedAnswer)) {
-//            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
-//            setRandomQuestion();
-//        } else {
-//            Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
-//        }
-//
-//    }
-
-    private void checkAnswer(String selectedAnswer) {
-        if (selectedAnswer.equals(correctAnswer)) {
-            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
-            setRandomQuestion();
-        } else {
-            Toast.makeText(this, "Wrong!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
+    //////////////////////////////////// Menu /////////////////////////////////////////////////
+    // menu setup
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
-
+    // menu nav
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_upload) {

@@ -21,7 +21,7 @@
         android:id="@+id/answer_button_c"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Option A"
+        android:text="Option C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/question_text" />
@@ -39,7 +39,7 @@
         android:id="@+id/answer_button_a"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Option C"
+        android:text="Option A"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/answer_button_b" />
