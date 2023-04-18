@@ -17,23 +17,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/new_topic_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_new_topic_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add new topic from file"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_new_topic_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add new topic from file"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/reset_data_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reset Data"
-        app:layout_constraintTop_toBottomOf="@+id/add_new_topic_button"
+        app:layout_constraintTop_toBottomOf="@+id/new_topic_name_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -44,14 +47,6 @@
         app:layout_constraintTop_toBottomOf="@+id/reset_data_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
-
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/new_topic_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ListView>
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
