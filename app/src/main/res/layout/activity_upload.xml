@@ -11,6 +11,8 @@
         android:id="@+id/new_topic_name_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="Enter the name for the new topic"
+        app:endIconMode="clear_text"
         app:layout_constraintEnd_toStartOf="@id/add_new_topic_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,43 +20,38 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/new_topic_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter topic name" />
+            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/add_new_topic_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add new topic"
+        android:text="Add new topic from file"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/upload_file_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Upload Csv File"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_topic_name_layout" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/reset_data_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reset Data"
+        app:layout_constraintTop_toBottomOf="@+id/add_new_topic_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/upload_file_button" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <ListView
-        android:id="@+id/topics_list"
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/reset_data_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/upload_file_button" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ListView
+            android:id="@+id/topics_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

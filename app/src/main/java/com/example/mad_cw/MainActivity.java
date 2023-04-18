@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private int currentQuestionIndex = 0;
     private List<Question> questions;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

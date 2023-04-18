@@ -106,6 +106,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return topics;
     }
+
     public List<Question> getQuestionsForTopic(int topicId) {
         List<Question> questions = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
